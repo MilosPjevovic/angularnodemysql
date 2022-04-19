@@ -1,82 +1,18 @@
 const express = require('express');
 const bodyparser = require('body-parser');
 const cors = require('cors');
-const mysql = require('mysql2');
+
 
 const app = express();
+
+const userRoute = require('./routes/User');
 
 app.use(cors());
 app.use(bodyparser.json());
 
-//database connection
-
-const db = mysql.createConnection({
-        host:'localhost',
-        user:'root',
-        password:'driftkiller',
-        database:'users',
-        port:3306
-})
-
-//check database connection
-
-db.connect(err=>{
-    if(err){
-        console.log(err,'dberr')
-    }else{
-        console.log('database connected...')
-    }
-})
+app.use('/user',userRoute);
 
 
-//get all data
-
-app.get('/user',(req,res)=>{
-
-    let qr = `select * from user`;
-
-    db.query(qr,(err,result)=>{
-        if(err){
-            console.log(err,'error')
-        }else if(result.length>0){
-            res.send({
-                message:'all user data',
-                data:result
-            })
-        }
-
-    })
-
-})
-
-
-//get single data 
-
-app.get('/user/:id',(req,res)=>{
-
-    let gID = req.params.id;
-
-    let qr = `select * from user where id = ${gID}`;
-
-    db.query(qr,(err,result)=>{
-
-        if(err){
-            console.log(err, 'error')
-        }else if(result.length>0){
-
-            res.send({
-                message:'get single data',
-                data:result
-            })
-        }else {
-            res.send({
-                message:'data not found'
-            })
-        }
-
-    })
-
-})
 
 //create data
 
